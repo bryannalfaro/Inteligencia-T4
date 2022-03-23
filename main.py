@@ -50,6 +50,9 @@ n_population = 15
 
 mutation_rate = 0.3
 
-population_set = genesis(np.array(list(ciudades_list.keys())), n_population, int(numero_ciudades))
-print(population_set)
+population_set1 = genesis(np.array(list(ciudades_list.keys())), n_population, int(numero_ciudades))
+print(population_set1)
 
+
+fitnes_list = get_all_fitnes(population_set1,n_population,int(numero_ciudades),ciudades_list)
+print('fitness',fitnes_list)
