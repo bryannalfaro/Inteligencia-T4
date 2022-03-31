@@ -7,6 +7,7 @@
 # Oscar Saravia
 #Tarea 4
 
+from datetime import datetime
 from funciones_tsp import *
 
 import math
@@ -56,3 +57,30 @@ print(population_set1)
 
 fitnes_list = get_all_fitnes(population_set1,n_population,int(numero_ciudades),ciudades_list)
 print('fitness',fitnes_list)
+
+prog_list = selection_prog(population_set1, fitnes_list)
+print('progenitor',prog_list[0][2])
+
+new_population_set = mate_population(prog_list)
+print('new population set',new_population_set)
+
+mutated_pop = mutate_population(new_population_set,int(numero_ciudades),mutation_rate)
+print('mutated population',mutated_pop)
+
+best_solution = [-1,np.inf,np.array([])]
+for i in range(2000):
+    if i%100==0: print(i, fitnes_list.min(), fitnes_list.mean(), datetime.now().strftime("%d/%m/%y %H:%M"))
+    fitnes_list = get_all_fitnes(mutated_pop,n_population,int(numero_ciudades),ciudades_list)
+
+    #Saving the best solution
+    if fitnes_list.min() < best_solution[1]:
+        best_solution[0] = i
+        best_solution[1] = fitnes_list.min()
+        best_solution[2] = np.array(mutated_pop)[fitnes_list.min() == fitnes_list]
+
+    progenitor_list = selection_prog(population_set1,fitnes_list)
+    new_population_set = mate_population(progenitor_list)
+
+    mutated_pop = mutate_population(new_population_set,int(numero_ciudades),mutation_rate)
+
+print(best_solution)
