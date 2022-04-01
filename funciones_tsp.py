@@ -3,7 +3,7 @@ import numpy as np
 
 
 def distance_points(a, b):
-    print(a,b)
+    #print(a,b)
     return math.sqrt((a['x']-b['x'])**2 + (a['y']-b['y'])**2)
 
 
@@ -58,12 +58,12 @@ def selection_prog(population, fitnes_list):
     progenitor_a = np.random.choice(list(range(len(population))), len(population), p= prob_list, replace=True)
     progenitor_b = np.random.choice(list(range(len(population))), len(population), p= prob_list, replace=True)
 
-    print(progenitor_a,progenitor_b)
+    #print(progenitor_a,progenitor_b)
 
     progenitor_a = population[progenitor_a]
     progenitor_b = population[progenitor_b]
 
-    print(progenitor_a,progenitor_b)
+    #print(progenitor_a,progenitor_b)
 
     return np.array([progenitor_a,progenitor_b])
 
