@@ -1,3 +1,4 @@
+import contextlib
 import math
 import numpy as np
 
@@ -10,27 +11,22 @@ def total_distance(ciudades_list):
     total = 0
     longitud = len(ciudades_list)
     for i in range(len(ciudades_list)):
-        try:
+        with contextlib.suppress(Exception):
             total += distance_points(
                 ciudades_list[f'ciudad {str(i+1)}'],
                 ciudades_list[f'ciudad {str(i + 2)}'],
             )
-
-        except:
-            pass
 
     total += distance_points(ciudades_list['ciudad 1'],
                              ciudades_list['ciudad '+str(longitud).rstrip("\n")])
     return total
 
 
-def genesis(city_list, n_population, n_cities):
+def genesis(city_list, n_population, NumCities):
 
-    population_set = []
-    for i in range(n_population):
-        # Randomly generating a new solution
-        population_set.append(city_list[np.random.choice(
-            list(range(n_cities)), n_cities, replace=False)])
+    population_set = [city_list[np.random.choice(
+        list(range(NumCities)), NumCities, replace=False)] for _ in range(n_population)]
+
     return np.array(population_set)
 
 
@@ -47,7 +43,6 @@ def fitness_eval(city_list, numero_ciudades, ciudades_list):
 def get_all_fitnes(population_set, n_population, numero_ciudades, ciudades_list):
     fitnes_list = np.zeros(n_population)
 
-    # Looping over all solutions computing the fitness for each solution
     for i in range(n_population):
         fitnes_list[i] = fitness_eval(
             population_set[i], numero_ciudades, ciudades_list)
@@ -63,50 +58,42 @@ def selection_prog(population, fitnes_list):
     progenitor_b = np.random.choice(list(range(len(population))), len(
         population), p=prob_list, replace=True)
 
-    # print(progenitor_a,progenitor_b)
-
     progenitor_a = population[progenitor_a]
     progenitor_b = population[progenitor_b]
-
-    # print(progenitor_a,progenitor_b)
 
     return np.array([progenitor_a, progenitor_b])
 
 
 def mate_progenitors(prog_a, prog_b):
-    offspring = prog_a[0:5]
+    offspring = prog_a[:5]
 
     for city in prog_b:
 
-        if not city in offspring:
+        if city not in offspring:
             offspring = np.concatenate((offspring, [city]))
 
     return offspring
 
 
-def mate_population(progenitor_list):
-    new_population_set = []
-    for i in range(progenitor_list.shape[1]):
-        prog_a, prog_b = progenitor_list[0][i], progenitor_list[1][i]
+def mate_population(original_list):
+    newPopulation = []
+    for i in range(original_list.shape[1]):
+        prog_a, prog_b = original_list[0][i], original_list[1][i]
         offspring = mate_progenitors(prog_a, prog_b)
-        new_population_set.append(offspring)
+        newPopulation.append(offspring)
 
-    return new_population_set
+    return newPopulation
 
 
-def mutate_offspring(offspring, n_cities, mutation_rate):
-    for q in range(int(n_cities*mutation_rate)):
-        a = np.random.randint(0, n_cities)
-        b = np.random.randint(0, n_cities)
+def mutate_offspring(offspring, NumCities, mutation_rate):
+    for _ in range(int(NumCities*mutation_rate)):
+        a = np.random.randint(0, NumCities)
+        b = np.random.randint(0, NumCities)
 
         offspring[a], offspring[b] = offspring[b], offspring[a]
 
     return offspring
 
 
-def mutate_population(new_population_set, n_cities, mutation_rate):
-    mutated_pop = []
-    for offspring in new_population_set:
-        mutated_pop.append(mutate_offspring(
-            offspring, n_cities, mutation_rate))
-    return mutated_pop
+def mutate_population(newPopulation, NumCities, mutation_rate):
+    return [mutate_offspring(item, NumCities, mutation_rate) for item in newPopulation]
