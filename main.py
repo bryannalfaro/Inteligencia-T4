@@ -83,6 +83,7 @@ first_city = list(ciudades_list.keys())[int(num_ciudad_inicial) - 1]
 first_city_index = list(best_path).index(first_city)
 show_best_path = list(best_path[first_city_index:])
 show_best_path.extend(iter(list(best_path[:first_city_index])))
+show_best_path.append(show_best_path[0])
 print('\tCamino:', show_best_path)
 
 # graphing best solution
